@@ -1,3 +1,11 @@
 package com.nexfin.frontend.network.models.response
 
-data class WalletResponse(val walletId: String, val userId: String, val balance: String, val currency: String)
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class WalletResponse(
+    val walletId: String,
+    val userId: String,
+    val balance: Double,
+    val currency: String
+)

@@ -1,3 +1,7 @@
 package com.nexfin.frontend.network.interceptors
 
-class AuthInterceptor
+import com.nexfin.frontend.security.TokenManager
+
+class AuthInterceptor(private val tokenManager: TokenManager) {
+    fun token(): String? = tokenManager.getToken()
+}

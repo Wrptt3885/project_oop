@@ -1,4 +1,18 @@
-FROM eclipse-temurin:21-jre
+FROM gradle:8.13-jdk21-alpine AS builder
+WORKDIR /workspace
+
+COPY build.gradle.kts settings.gradle.kts gradle.properties ./
+COPY Backend ./Backend
+COPY gradle ./gradle
+COPY shared ./shared    
+COPY Frontend ./frontend
+
+RUN gradle :backend:bootJar --no-daemon
+
+FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
-COPY backend/build/libs/backend.jar app.jar
-ENTRYPOINT ["java", "-jar", "app.jar"]
+
+COPY --from=builder /workspace/Backend/build/libs/*.jar app.jar
+
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]
