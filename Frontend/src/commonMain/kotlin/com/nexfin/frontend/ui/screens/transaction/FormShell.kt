@@ -1,50 +1,64 @@
+// Frontend/src/commonMain/kotlin/com/nexfin/frontend/ui/screens/transaction/FormShell.kt
 package com.nexfin.frontend.ui.screens.transaction
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
 @Composable
 fun FormShell(
     title: String,
-    subtitle: String,
+    onBackClick: () -> Unit,
     content: @Composable () -> Unit
 ) {
-    Column(
+    // กางเต็มจอ + ดูดสีดำ
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(28.dp)
-            .clip(RoundedCornerShape(24.dp))
-            .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.92f))
-            .padding(24.dp)
+            .background(MaterialTheme.colorScheme.background),
+        contentAlignment = Alignment.TopCenter
     ) {
-        Text(
-            text = "Action Center",
+        // ล็อกความกว้างไว้ตรงกลาง (Responsive)
+        Column(
             modifier = Modifier
-                .clip(RoundedCornerShape(999.dp))
-                .background(MaterialTheme.colorScheme.secondary.copy(alpha = 0.16f))
-                .padding(horizontal = 14.dp, vertical = 8.dp),
-            style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.primary
-        )
-        Spacer(modifier = Modifier.height(18.dp))
-        Text(title, style = MaterialTheme.typography.headlineMedium)
-        Text(
-            subtitle,
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.padding(top = 8.dp, bottom = 24.dp)
-        )
-        content()
+                .widthIn(max = 500.dp) // ฟอร์มกรอกข้อมูลไม่ควรใหญ่เกิน 500dp
+                .fillMaxWidth()
+                .padding(24.dp)
+        ) {
+            // Header: ปุ่ม Back + ชื่อหน้า
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(bottom = 24.dp)
+            ) {
+                TextButton(onClick = onBackClick) {
+                    Text("❮ Back", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
+                }
+                Spacer(modifier = Modifier.width(16.dp))
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+            }
+
+            // ตัวการ์ดสำหรับใส่ฟอร์ม
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(24.dp))
+                    .background(MaterialTheme.colorScheme.surface)
+                    .padding(24.dp)
+            ) {
+                content()
+            }
+        }
     }
 }
