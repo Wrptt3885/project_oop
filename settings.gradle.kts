@@ -1,8 +1,23 @@
+pluginManagement {
+    repositories {
+        google()
+        gradlePluginPortal()
+        mavenCentral()
+    }
+}
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
 rootProject.name = "nexfin-wallet"
 
 include(":backend")
 include(":frontend")
-include(":shared")
 
 project(":backend").projectDir = file("Backend")
 project(":frontend").projectDir = file("Frontend")

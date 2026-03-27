@@ -1,4 +1,3 @@
-// Backend/src/main/java/com/nexfin/backend/model/entity/User.java
 package com.nexfin.backend.model.entity;
 
 import jakarta.persistence.Column;
@@ -11,7 +10,7 @@ import jakarta.persistence.Table;
 public class User {
 
     @Id
-    private String id; // <--- เปลี่ยนจาก UUID เป็น String เพื่อเก็บเลขบัญชี 10 หลัก
+    private String id;
 
     @Column(nullable = false, unique = true)
     private String email;

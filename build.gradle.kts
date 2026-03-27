@@ -1,5 +1,6 @@
 plugins {
     base
+    id("com.android.application") version "8.5.2" apply false
     kotlin("multiplatform") version "2.1.20" apply false
     kotlin("plugin.serialization") version "2.1.20" apply false
     kotlin("plugin.compose") version "2.1.20" apply false
@@ -9,13 +10,6 @@ plugins {
 group = "com.nexfin"
 version = "0.0.1-SNAPSHOT"
 
-allprojects {
-    repositories {
-        mavenCentral()
-        google()
-    }
-}
-
 subprojects {
     group = rootProject.group
     version = rootProject.version
@@ -24,5 +18,5 @@ subprojects {
 tasks.register("buildAll") {
     group = "build"
     description = "Build all NexFin modules."
-    dependsOn(":backend:build", ":frontend:build", ":shared:build")
+    dependsOn(":backend:build", ":frontend:build")
 }

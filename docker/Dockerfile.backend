@@ -1,13 +1,9 @@
 FROM gradle:8.13-jdk21-alpine AS builder
-WORKDIR /workspace
+WORKDIR /workspace/Backend
 
-COPY build.gradle.kts settings.gradle.kts gradle.properties ./
-COPY Backend ./Backend
-COPY gradle ./gradle
-COPY shared ./shared    
-COPY Frontend ./frontend
+COPY Backend ./
 
-RUN gradle :backend:bootJar --no-daemon
+RUN gradle bootJar --no-daemon
 
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app

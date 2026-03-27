@@ -23,33 +23,29 @@ fun LoginScreen(
     onRegisterNavigate: () -> Unit
 ) {
     AuthShell(
-        title = "ยินดีต้อนรับกลับมา",
-        subtitle = "เข้าสู่ระบบอย่างปลอดภัยเพื่อจัดการยอดเงิน โอนเงิน และดูประวัติการทำรายการ"
+        title = "Welcome Back",
+        subtitle = "Sign in to manage your balance, transfers, and transaction history."
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
-            // ช่องกรอกข้อมูล
-            CustomTextField(email, onEmailChange, "อีเมล")
-            CustomTextField(password, onPasswordChange, "รหัสผ่าน", isPassword = true)
+            CustomTextField(email, onEmailChange, "Email")
+            CustomTextField(password, onPasswordChange, "Password", isPassword = true)
 
-            // ปุ่มเข้าสู่ระบบ
             CustomButton(
-                text = if (isLoading) "กำลังเข้าสู่ระบบ..." else "เข้าสู่ระบบ",
+                text = if (isLoading) "Signing In..." else "Sign In",
                 onClick = onSubmit,
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !isLoading
             )
 
-            // ข้อความคั่น
             Text(
-                text = "ยังไม่มีบัญชีใช่ไหม?",
+                text = "Don't have an account yet?",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                 modifier = Modifier.padding(top = 16.dp)
             )
 
-            // ปุ่มไปหน้าสมัครสมาชิก
             CustomButton(
-                text = "สร้างบัญชีใหม่",
+                text = "Create Account",
                 onClick = onRegisterNavigate,
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !isLoading

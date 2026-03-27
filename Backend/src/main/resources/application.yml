@@ -2,6 +2,7 @@ spring:
   application:
     name: nexfin-backend
   jpa:
+    open-in-view: false
     hibernate:
       ddl-auto: validate
     properties:

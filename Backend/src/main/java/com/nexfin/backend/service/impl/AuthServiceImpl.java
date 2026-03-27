@@ -1,4 +1,3 @@
-// Backend/src/main/java/com/nexfin/backend/service/impl/AuthServiceImpl.java
 package com.nexfin.backend.service.impl;
 
 import com.nexfin.backend.config.JwtUtil;
@@ -26,8 +25,6 @@ public class AuthServiceImpl implements AuthService {
     private final WalletRepository walletRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
-    
-    // ใช้ SecureRandom สุ่มแบบเข้ารหัส ป้องกันการคาดเดา
     private final SecureRandom secureRandom = new SecureRandom();
 
     public AuthServiceImpl(
@@ -41,25 +38,17 @@ public class AuthServiceImpl implements AuthService {
         this.jwtUtil = jwtUtil;
     }
 
-    /**
-     * สุ่มเลขบัญชี 10 หลัก แบบไม่ซ้ำใครใน Database
-     */
     private String generateUniqueAccountNumber() {
         String accountNo;
         do {
             StringBuilder sb = new StringBuilder();
-            // หลักแรกสุ่ม 1-9 (ไม่ให้ขึ้นต้นด้วย 0)
-            sb.append(secureRandom.nextInt(9) + 1); 
-            
-            // อีก 9 หลักสุ่ม 0-9
+            sb.append(secureRandom.nextInt(9) + 1);
             for (int i = 0; i < 9; i++) {
                 sb.append(secureRandom.nextInt(10));
             }
             accountNo = sb.toString();
-            
-        // เช็กกับ DB ว่าซ้ำไหม ถ้าซ้ำก็สุ่มใหม่
-        } while (userRepository.existsById(accountNo)); 
-        
+        } while (userRepository.existsById(accountNo));
+
         return accountNo;
     }
 
@@ -78,18 +67,16 @@ public class AuthServiceImpl implements AuthService {
         if (userRepository.findByEmail(normalizedEmail).isPresent()) {
             throw new DuplicateEmailException(normalizedEmail);
         }
-        
-        // สร้าง User ด้วยเลขบัญชี 10 หลักที่เพิ่งเจเนอเรต
+
         User user = new User(
                 generateUniqueAccountNumber(),
                 normalizedEmail,
                 passwordEncoder.encode(request.password()),
                 request.fullName().trim());
         userRepository.save(user);
-        
-        // สร้างกระเป๋าเงิน (ID กระเป๋ายังเป็น UUID เหมือนเดิมได้ไม่มีปัญหา)
+
         walletRepository.save(new Wallet(UUID.randomUUID(), user, BigDecimal.ZERO, Currency.THB));
-        
+
         return new LoginResponse(jwtUtil.generateToken(user.getEmail()), user.getId(), user.getEmail());
     }
 }

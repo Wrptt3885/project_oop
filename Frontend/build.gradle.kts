@@ -1,4 +1,8 @@
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
+    id("com.android.application")
     kotlin("multiplatform")
     kotlin("plugin.compose")
     kotlin("plugin.serialization")
@@ -6,6 +10,13 @@ plugins {
 }
 
 kotlin {
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    androidTarget {
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_17)
+        }
+    }
+
     jvm()
 
     sourceSets {
@@ -28,6 +39,41 @@ kotlin {
                 implementation(compose.desktop.currentOs)
                 implementation("io.ktor:ktor-client-cio:3.1.1")
             }
+        }
+        val androidMain by getting {
+            dependencies {
+                implementation(compose.preview)
+                implementation("androidx.activity:activity-compose:1.10.1")
+                implementation("io.ktor:ktor-client-okhttp:3.1.1")
+            }
+        }
+    }
+}
+
+android {
+    namespace = "com.nexfin.frontend"
+    compileSdk = 35
+
+    defaultConfig {
+        applicationId = "com.nexfin.frontend"
+        minSdk = 26
+        targetSdk = 35
+        versionCode = 1
+        versionName = "1.0"
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    buildFeatures {
+        compose = true
+    }
+
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
 }
