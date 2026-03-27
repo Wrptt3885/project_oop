@@ -69,7 +69,7 @@ fun NexFinApp(appModule: AppModule? = null) {
                         toUserId = currentUserId ?: "-",
                         reference = reference
                     )
-                    destination = AppDestination.Slip
+                    destination = AppDestination.SlipDetail
                 }
             )
 
@@ -85,7 +85,7 @@ fun NexFinApp(appModule: AppModule? = null) {
                         toUserId = toUserId,
                         reference = reference
                     )
-                    destination = AppDestination.Slip
+                    destination = AppDestination.SlipDetail
                 }
             )
 
@@ -108,10 +108,16 @@ fun NexFinApp(appModule: AppModule? = null) {
 
             AppDestination.History -> TransactionHistoryScreen(
                 transactions = transactionState.transactions,
-                onBack = { destination = AppDestination.Dashboard }
+                onBack = { destination = AppDestination.Dashboard },
+                onTransactionClick = { transaction ->
+                    AppLogger.info(
+                        "NexFinApp",
+                        "Transaction selected: id=${transaction.transactionId}, reference=${transaction.reference}"
+                    )
+                }
             )
 
-            AppDestination.Slip -> SlipScreen(
+            AppDestination.SlipDetail -> SlipScreen(
                 amount = slipState.amount,
                 toUserId = slipState.toUserId,
                 reference = slipState.reference,
@@ -145,8 +151,8 @@ fun NexFinApp(appModule: AppModule? = null) {
 
 @Composable
 private fun LoginRoute(module: AppModule, isLoading: Boolean, onNavigate: (AppDestination) -> Unit) {
-    var email by remember { mutableStateOf("alice@example.com") }
-    var password by remember { mutableStateOf("StrongPass1") }
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
 
     LoginScreen(
         email = email,

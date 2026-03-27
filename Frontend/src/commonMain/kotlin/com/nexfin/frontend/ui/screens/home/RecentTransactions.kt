@@ -1,6 +1,7 @@
 package com.nexfin.frontend.ui.screens.home
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,7 +20,8 @@ import com.nexfin.frontend.utils.DateFormatter
 
 @Composable
 fun RecentTransactions(
-    transactions: List<TransactionResponse>
+    transactions: List<TransactionResponse>,
+    onTransactionClick: ((TransactionResponse) -> Unit)? = null
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -30,7 +32,10 @@ fun RecentTransactions(
         } else {
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 transactions.take(5).forEach { transaction ->
-                    TransactionRow(transaction)
+                    TransactionCard(
+                        transaction = transaction,
+                        onClick = onTransactionClick?.let { callback -> { callback(transaction) } }
+                    )
                 }
             }
         }
@@ -38,12 +43,22 @@ fun RecentTransactions(
 }
 
 @Composable
-private fun TransactionRow(transaction: TransactionResponse) {
+fun TransactionCard(
+    transaction: TransactionResponse,
+    onClick: (() -> Unit)? = null
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(18.dp))
             .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.9f))
+            .then(
+                if (onClick != null) {
+                    Modifier.clickable(onClick = onClick)
+                } else {
+                    Modifier
+                }
+            )
             .padding(16.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -60,7 +75,7 @@ private fun TransactionRow(transaction: TransactionResponse) {
 }
 
 @Composable
-private fun EmptyStateCard(message: String) {
+fun EmptyStateCard(message: String) {
     Text(
         text = message,
         modifier = Modifier

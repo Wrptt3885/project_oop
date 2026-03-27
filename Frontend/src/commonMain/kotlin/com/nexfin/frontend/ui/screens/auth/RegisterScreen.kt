@@ -25,30 +25,30 @@ fun RegisterScreen(
     onLoginNavigate: () -> Unit
 ) {
     AuthShell(
-        title = "Create Account",
-        subtitle = "Join NexFin and start managing your digital finances with less friction."
+        title = "สร้างบัญชีใหม่",
+        subtitle = "สมัครสมาชิก NexFin เพื่อเริ่มต้นจัดการการเงินดิจิทัลของคุณอย่างง่ายดาย"
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
-            CustomTextField(fullName, onFullNameChange, "Full Name")
-            CustomTextField(email, onEmailChange, "Email")
-            CustomTextField(password, onPasswordChange, "Password", isPassword = true)
+            CustomTextField(fullName, onFullNameChange, "ชื่อ-นามสกุล")
+            CustomTextField(email, onEmailChange, "อีเมล")
+            CustomTextField(password, onPasswordChange, "รหัสผ่าน", isPassword = true)
 
             CustomButton(
-                text = if (isLoading) "Creating Account..." else "Register",
+                text = if (isLoading) "กำลังสร้างบัญชี..." else "สมัครสมาชิก",
                 onClick = onSubmit,
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !isLoading
             )
 
             Text(
-                text = "Already have an account?",
+                text = "มีบัญชีอยู่แล้วใช่ไหม?",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                 modifier = Modifier.padding(top = 16.dp)
             )
 
             CustomButton(
-                text = "Back To Sign In",
+                text = "กลับไปเข้าสู่ระบบ",
                 onClick = onLoginNavigate,
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !isLoading
