@@ -6,5 +6,5 @@ import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface WalletRepository extends JpaRepository<Wallet, UUID> {
-    Optional<Wallet> findByUserId(UUID userId);
+    Optional<Wallet> findByUserId(String userId);
 }

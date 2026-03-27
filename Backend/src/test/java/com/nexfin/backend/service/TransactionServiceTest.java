@@ -39,8 +39,8 @@ class TransactionServiceTest {
 
     @Test
     void shouldTransferBetweenWallets() {
-        UUID senderId = UUID.randomUUID();
-        UUID receiverId = UUID.randomUUID();
+        String senderId = "1234567890";
+        String receiverId = "2345678901";
         Wallet sender = createWallet(senderId, "200.00");
         Wallet receiver = createWallet(receiverId, "50.00");
 
@@ -60,7 +60,7 @@ class TransactionServiceTest {
 
     @Test
     void shouldRejectSameSourceAndTargetUser() {
-        UUID userId = UUID.randomUUID();
+        String userId = "1234567890";
 
         assertThrows(InvalidTransactionException.class,
                 () -> transactionService.transfer(new TransferRequest(userId, userId, new BigDecimal("10.00"), "SELF")));
@@ -68,8 +68,8 @@ class TransactionServiceTest {
 
     @Test
     void shouldRejectWhenBalanceInsufficient() {
-        UUID senderId = UUID.randomUUID();
-        UUID receiverId = UUID.randomUUID();
+        String senderId = "1234567890";
+        String receiverId = "2345678901";
         Wallet sender = createWallet(senderId, "20.00");
         Wallet receiver = createWallet(receiverId, "50.00");
 
@@ -80,7 +80,7 @@ class TransactionServiceTest {
                 () -> transactionService.transfer(new TransferRequest(senderId, receiverId, new BigDecimal("75.00"), "PAYMENT_001")));
     }
 
-    private Wallet createWallet(UUID userId, String balance) {
+    private Wallet createWallet(String userId, String balance) {
         User user = new User(userId, userId + "@nexfin.com", "encoded-password", "User");
         return new Wallet(UUID.randomUUID(), user, new BigDecimal(balance), Currency.THB);
     }

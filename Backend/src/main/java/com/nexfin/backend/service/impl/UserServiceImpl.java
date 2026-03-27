@@ -1,3 +1,4 @@
+// Backend/src/main/java/com/nexfin/backend/service/impl/UserServiceImpl.java
 package com.nexfin.backend.service.impl;
 
 import com.nexfin.backend.exception.UserNotFoundException;
@@ -5,7 +6,6 @@ import com.nexfin.backend.model.dto.response.UserResponse;
 import com.nexfin.backend.repository.UserRepository;
 import com.nexfin.backend.service.UserService;
 import java.util.List;
-import java.util.UUID;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -26,7 +26,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponse findById(UUID userId) {
+    // ชื่อต้องตรงกับ Interface และรับค่าเป็น String
+    public UserResponse findById(String userId) { 
         return userRepository.findById(userId)
                 .map(UserResponse::from)
                 .orElseThrow(() -> new UserNotFoundException(userId));

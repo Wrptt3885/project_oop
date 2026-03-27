@@ -15,41 +15,48 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun FormShell(
     title: String,
+    subtitle: String = "",
     onBackClick: () -> Unit,
     content: @Composable () -> Unit
 ) {
-    // กางเต็มจอ + ดูดสีดำ
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background),
         contentAlignment = Alignment.TopCenter
     ) {
-        // ล็อกความกว้างไว้ตรงกลาง (Responsive)
         Column(
             modifier = Modifier
-                .widthIn(max = 500.dp) // ฟอร์มกรอกข้อมูลไม่ควรใหญ่เกิน 500dp
+                .widthIn(max = 500.dp)
                 .fillMaxWidth()
                 .padding(24.dp)
         ) {
-            // Header: ปุ่ม Back + ชื่อหน้า
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(bottom = 24.dp)
+                modifier = Modifier.padding(bottom = 16.dp)
             ) {
                 TextButton(onClick = onBackClick) {
-                    Text("❮ Back", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
+                    Text("❮ ย้อนกลับ", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
                 }
-                Spacer(modifier = Modifier.width(16.dp))
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
             }
 
-            // ตัวการ์ดสำหรับใส่ฟอร์ม
+            Text(
+                text = title,
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+            if (subtitle.isNotEmpty()) {
+                Text(
+                    text = subtitle,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
+                    modifier = Modifier.padding(top = 4.dp, bottom = 24.dp)
+                )
+            } else {
+                Spacer(modifier = Modifier.height(24.dp))
+            }
+
             Box(
                 modifier = Modifier
                     .fillMaxWidth()

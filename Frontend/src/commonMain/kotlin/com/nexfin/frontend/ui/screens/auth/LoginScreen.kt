@@ -11,7 +11,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.nexfin.frontend.ui.screens.components.CustomButton
 import com.nexfin.frontend.ui.screens.components.CustomTextField
-import com.nexfin.frontend.ui.screens.components.LoadingIndicator
 
 @Composable
 fun LoginScreen(
@@ -20,45 +19,38 @@ fun LoginScreen(
     isLoading: Boolean,
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
-    onLoginClick: () -> Unit,
-    onRegisterClick: () -> Unit
+    onSubmit: () -> Unit,
+    onRegisterNavigate: () -> Unit
 ) {
     AuthShell(
-        title = "Welcome back",
-        subtitle = "Securely sign in to manage your wallet balance, transfers, and recent activity."
+        title = "ยินดีต้อนรับกลับมา",
+        subtitle = "เข้าสู่ระบบอย่างปลอดภัยเพื่อจัดการยอดเงิน โอนเงิน และดูประวัติการทำรายการ"
     ) {
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(14.dp)
-        ) {
-            CustomTextField(
-                value = email,
-                onValueChange = onEmailChange,
-                label = "Email"
-            )
-            CustomTextField(
-                value = password,
-                onValueChange = onPasswordChange,
-                label = "Password",
-                isPassword = true
-            )
+        Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
+            // ช่องกรอกข้อมูล
+            CustomTextField(email, onEmailChange, "อีเมล")
+            CustomTextField(password, onPasswordChange, "รหัสผ่าน", isPassword = true)
+
+            // ปุ่มเข้าสู่ระบบ
             CustomButton(
-                text = if (isLoading) "Signing in..." else "Sign In",
-                onClick = onLoginClick,
+                text = if (isLoading) "กำลังเข้าสู่ระบบ..." else "เข้าสู่ระบบ",
+                onClick = onSubmit,
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !isLoading
             )
-            if (isLoading) {
-                LoadingIndicator("Checking your account")
-            }
+
+            // ข้อความคั่น
             Text(
-                text = "New here?",
+                text = "ยังไม่มีบัญชีใช่ไหม?",
                 style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(top = 8.dp)
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                modifier = Modifier.padding(top = 16.dp)
             )
+
+            // ปุ่มไปหน้าสมัครสมาชิก
             CustomButton(
-                text = "Create Account",
-                onClick = onRegisterClick,
+                text = "สร้างบัญชีใหม่",
+                onClick = onRegisterNavigate,
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !isLoading
             )

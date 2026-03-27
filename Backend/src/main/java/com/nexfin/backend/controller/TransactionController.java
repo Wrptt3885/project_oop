@@ -5,7 +5,6 @@ import com.nexfin.backend.model.dto.response.TransactionResponse;
 import com.nexfin.backend.service.TransactionService;
 import jakarta.validation.Valid;
 import java.util.List;
-import java.util.UUID;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,7 +28,7 @@ public class TransactionController {
     }
 
     @GetMapping("/user/{userId}")
-    public List<TransactionResponse> findByUser(@PathVariable UUID userId) {
+    public List<TransactionResponse> findByUser(@PathVariable String userId) {
         return transactionService.findByUser(userId);
     }
 }

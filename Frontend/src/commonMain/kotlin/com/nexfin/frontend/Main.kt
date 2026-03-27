@@ -1,3 +1,4 @@
+// Frontend/src/commonMain/kotlin/com/nexfin/frontend/Main.kt
 package com.nexfin.frontend
 
 import com.nexfin.frontend.di.AppModule
@@ -98,7 +99,7 @@ fun NexFinApp(
                 isLoading = authState.isLoading,
                 onEmailChange = { loginEmail = it },
                 onPasswordChange = { loginPassword = it },
-                onLoginClick = {
+                onSubmit = { // <--- แก้ไขแล้ว
                     if (ValidationUtils.isValidEmail(loginEmail) && ValidationUtils.isValidPassword(loginPassword)) {
                         module.authViewModel.login(loginEmail, loginPassword)
                     } else {
@@ -108,7 +109,7 @@ fun NexFinApp(
                         )
                     }
                 },
-                onRegisterClick = { destination = AppDestination.Register }
+                onRegisterNavigate = { destination = AppDestination.Register } // <--- แก้ไขแล้ว
             )
 
             AppDestination.Register -> RegisterScreen(
@@ -119,7 +120,7 @@ fun NexFinApp(
                 onFullNameChange = { registerName = it },
                 onEmailChange = { registerEmail = it },
                 onPasswordChange = { registerPassword = it },
-                onRegisterClick = {
+                onSubmit = { // <--- แก้ไขแล้ว
                     if (registerName.isNotBlank() &&
                         ValidationUtils.isValidEmail(registerEmail) &&
                         ValidationUtils.isValidPassword(registerPassword)
@@ -132,7 +133,7 @@ fun NexFinApp(
                         )
                     }
                 },
-                onBackToLoginClick = { destination = AppDestination.Login }
+                onLoginNavigate = { destination = AppDestination.Login } // <--- แก้ไขแล้ว
             )
 
             AppDestination.Dashboard -> DashboardScreen(

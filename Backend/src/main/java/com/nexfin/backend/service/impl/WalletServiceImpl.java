@@ -27,7 +27,7 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
-    public WalletResponse getWalletByUserId(UUID userId) {
+    public WalletResponse getWalletByUserId(String userId) {
         Wallet wallet = walletRepository.findByUserId(userId)
                 .orElseThrow(() -> new WalletNotFoundException(userId));
         return WalletResponse.from(wallet);
@@ -35,7 +35,7 @@ public class WalletServiceImpl implements WalletService {
 
     @Override
     @Transactional
-    public WalletResponse topUp(UUID userId, TopUpRequest request) {
+    public WalletResponse topUp(String userId, TopUpRequest request) {
         Wallet wallet = walletRepository.findByUserId(userId)
                 .orElseThrow(() -> new WalletNotFoundException(userId));
         wallet.setBalance(wallet.getBalance().add(request.amount()));

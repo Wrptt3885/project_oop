@@ -8,6 +8,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.nexfin.frontend.network.models.response.TransactionResponse
@@ -26,14 +28,12 @@ fun DashboardScreen(
     onHistoryNavigate: () -> Unit,
     onProfileNavigate: () -> Unit
 ) {
-    // Layer 1: พื้นหลังดำสนิทกางเต็มจอ
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background),
         contentAlignment = Alignment.TopCenter
     ) {
-        // Layer 2: ตัว Content หลัก ล็อกความกว้างไว้ตรงกลาง
         Column(
             modifier = Modifier
                 .widthIn(max = 600.dp)
@@ -42,7 +42,7 @@ fun DashboardScreen(
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
             
-            // --- Header: ทักทายผู้ใช้ ---
+            // Header
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -52,32 +52,31 @@ fun DashboardScreen(
                     Text(
                         text = "NexFin Wallet",
                         style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.primary
+                        color = MaterialTheme.colorScheme.secondary // ใช้สีฟ้า Sky Blue
                     )
                     Text(
-                        text = "Hi, ${userEmail.substringBefore("@")}",
+                        text = "สวัสดี, ${userEmail.substringBefore("@")}",
                         style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onBackground
                     )
                 }
                 
-                // ปุ่ม Profile
                 FilledTonalButton(
                     onClick = onProfileNavigate,
                     shape = RoundedCornerShape(12.dp),
                     colors = ButtonDefaults.filledTonalButtonColors(
                         containerColor = MaterialTheme.colorScheme.surface,
-                        contentColor = MaterialTheme.colorScheme.primary
+                        contentColor = MaterialTheme.colorScheme.secondary
                     )
                 ) {
-                    Text("Profile")
+                    Text("โปรไฟล์")
                 }
             }
 
-            // --- Wallet Card ---
+            // Wallet Card
             if (isLoading && wallet == null) {
-                LoadingIndicator("Loading your dashboard")
+                LoadingIndicator("กำลังโหลดข้อมูลกระเป๋าเงิน...")
             } else {
                 WalletCard(
                     balance = wallet?.balance ?: 0.0,
@@ -86,9 +85,9 @@ fun DashboardScreen(
                 )
             }
 
-            // --- Fast Actions ---
+            // Fast Actions
             Text(
-                text = "Fast Actions",
+                text = "ธุรกรรมด่วน",
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier.padding(top = 8.dp, bottom = 4.dp)
@@ -102,18 +101,24 @@ fun DashboardScreen(
                     onClick = onTopUpNavigate,
                     modifier = Modifier.weight(1f).height(56.dp),
                     shape = RoundedCornerShape(16.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary, // สีน้ำเงินเข้ม
+                        contentColor = Color.White
+                    )
                 ) {
-                    Text("Top Up", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onPrimary)
+                    Text("เติมเงิน", fontWeight = FontWeight.Bold)
                 }
                 
                 Button(
                     onClick = onTransferNavigate,
                     modifier = Modifier.weight(1f).height(56.dp),
                     shape = RoundedCornerShape(16.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.secondary, // สีฟ้า
+                        contentColor = Color.White
+                    )
                 ) {
-                    Text("Transfer", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSecondary)
+                    Text("โอนเงิน", fontWeight = FontWeight.Bold)
                 }
             }
 
@@ -124,23 +129,50 @@ fun DashboardScreen(
                 OutlinedButton(
                     onClick = onHistoryNavigate,
                     modifier = Modifier.weight(1f).height(48.dp),
-                    shape = RoundedCornerShape(12.dp)
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onBackground)
                 ) {
-                    Text("History")
+                    Text("ประวัติรายการ")
                 }
                 
                 OutlinedButton(
                     onClick = onRefresh,
                     modifier = Modifier.weight(1f).height(48.dp),
-                    shape = RoundedCornerShape(12.dp)
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onBackground)
                 ) {
-                    Text(if (isLoading) "Refreshing..." else "Refresh")
+                    Text(if (isLoading) "กำลังรีเฟรช..." else "รีเฟรชข้อมูล")
                 }
             }
 
-            // --- Recent Activity (ดึงจากไฟล์เดิมของมึงมาโชว์เลย) ---
-            Box(modifier = Modifier.padding(top = 16.dp)) {
-                RecentTransactions(transactions)
+            // Recent Activity (บังคับสีขาวให้ชัดเจน)
+            Text(
+                text = "ประวัติการทำรายการล่าสุด",
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onBackground, // ขาวสว่าง
+                modifier = Modifier.padding(top = 16.dp)
+            )
+            
+            Box(modifier = Modifier.padding(top = 8.dp)) {
+                if (transactions.isEmpty()) {
+                    // กล่องข้อความตอนไม่มีข้อมูล บังคับสีให้สวยๆ
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(16.dp))
+                            .background(MaterialTheme.colorScheme.surface)
+                            .padding(24.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "ยังไม่มีประวัติการทำธุรกรรม...",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f) // เทาอ่อน
+                        )
+                    }
+                } else {
+                    RecentTransactions(transactions)
+                }
             }
         }
     }

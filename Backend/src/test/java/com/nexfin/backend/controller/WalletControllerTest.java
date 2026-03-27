@@ -33,7 +33,7 @@ class WalletControllerTest {
 
     @Test
     void shouldReturnWalletByUserId() throws Exception {
-        UUID userId = UUID.randomUUID();
+        String userId = "1234567890";
         UUID walletId = UUID.randomUUID();
 
         when(walletService.getWalletByUserId(userId))
@@ -42,14 +42,14 @@ class WalletControllerTest {
         mockMvc.perform(get("/api/wallets/{userId}", userId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.walletId").value(walletId.toString()))
-                .andExpect(jsonPath("$.userId").value(userId.toString()))
+                .andExpect(jsonPath("$.userId").value(userId))
                 .andExpect(jsonPath("$.balance").value(250.00))
                 .andExpect(jsonPath("$.currency").value("THB"));
     }
 
     @Test
     void shouldTopUpWallet() throws Exception {
-        UUID userId = UUID.randomUUID();
+        String userId = "1234567890";
         UUID walletId = UUID.randomUUID();
 
         when(walletService.topUp(eq(userId), eq(new com.nexfin.backend.model.dto.request.TopUpRequest(new BigDecimal("50.00"), "PROMPTPAY"))))

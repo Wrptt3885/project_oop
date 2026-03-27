@@ -4,7 +4,6 @@ import com.nexfin.backend.model.dto.request.TopUpRequest;
 import com.nexfin.backend.model.dto.response.WalletResponse;
 import com.nexfin.backend.service.WalletService;
 import jakarta.validation.Valid;
-import java.util.UUID;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,12 +22,12 @@ public class WalletController {
     }
 
     @GetMapping("/{userId}")
-    public WalletResponse getWallet(@PathVariable UUID userId) {
+    public WalletResponse getWallet(@PathVariable String userId) {
         return walletService.getWalletByUserId(userId);
     }
 
     @PostMapping("/{userId}/top-up")
-    public WalletResponse topUp(@PathVariable UUID userId, @Valid @RequestBody TopUpRequest request) {
+    public WalletResponse topUp(@PathVariable String userId, @Valid @RequestBody TopUpRequest request) {
         return walletService.topUp(userId, request);
     }
 }

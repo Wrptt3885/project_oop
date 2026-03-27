@@ -36,25 +36,25 @@ fun WalletCard(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(210.dp) // ล็อกความสูงให้สัดส่วนเหมือนบัตรจริง
+            .height(210.dp)
             .clip(RoundedCornerShape(24.dp))
-            // Layer 1: พื้นหลังการ์ดโปร่งแสง (Glass)
+            // Layer 1: พื้นหลังการ์ดโปร่งแสง
             .background(
                 Brush.linearGradient(
                     colors = listOf(
-                        Color(0x33FFFFFF), // สีขาวโปร่งแสง 20% มุมซ้ายบน
-                        Color(0x05FFFFFF)  // แทบจะใส มุมขวาล่าง
+                        Color(0x33FFFFFF),
+                        Color(0x05FFFFFF)
                     ),
                     start = Offset(0f, 0f),
                     end = Offset(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)
                 )
             )
-            // Layer 2: เหลือบสี Neon สวยๆ
+            // Layer 2: เปลี่ยนจาก Neon มาเป็นโทน Premium Blue
             .background(
                 Brush.linearGradient(
                     colors = listOf(
-                        NexFinColors.NeonPurple.copy(alpha = 0.2f),
-                        NexFinColors.NeonCyan.copy(alpha = 0.1f)
+                        NexFinColors.PrimaryAccent.copy(alpha = 0.4f),   // น้ำเงินเข้ม
+                        NexFinColors.SecondaryAccent.copy(alpha = 0.2f)  // ฟ้าสว่าง
                     )
                 )
             )
@@ -63,8 +63,8 @@ fun WalletCard(
                 width = 1.dp,
                 brush = Brush.linearGradient(
                     colors = listOf(
-                        Color(0x66FFFFFF), // ขอบขาวสว่างด้านบน
-                        Color(0x1AFFFFFF)  // ขอบจางด้านล่าง
+                        Color(0x66FFFFFF),
+                        Color(0x1AFFFFFF)
                     )
                 ),
                 shape = RoundedCornerShape(24.dp)
@@ -75,7 +75,7 @@ fun WalletCard(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            // Header บัตร
+            // Header
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -84,13 +84,12 @@ fun WalletCard(
                 Text(
                     text = "VIRTUAL WALLET",
                     style = MaterialTheme.typography.labelLarge,
-                    color = Color.White.copy(alpha = 0.7f),
+                    color = Color.White.copy(alpha = 0.8f),
                     letterSpacing = 1.sp
                 )
-                // จำลองสัญลักษณ์ชิป หรือ NFC
                 Text(
                     text = "»»»", 
-                    color = Color.White.copy(alpha = 0.5f), 
+                    color = Color.White.copy(alpha = 0.6f), 
                     letterSpacing = 2.sp
                 )
             }
@@ -98,37 +97,36 @@ fun WalletCard(
             // ตรงกลาง: ยอดเงิน
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(
-                    text = "Available Balance",
+                    text = "ยอดเงินคงเหลือ",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = Color.White.copy(alpha = 0.6f)
+                    color = Color.White.copy(alpha = 0.7f)
                 )
                 Text(
                     text = CurrencyFormatter.format(balance, currency),
-                    // ปรับไซส์ใหญ่ๆ ฟอนต์หนาๆ ให้อ่านง่าย
                     fontSize = 36.sp,
                     fontWeight = FontWeight.ExtraBold,
                     color = Color.White
                 )
             }
 
-            // Footer บัตร: ชื่อเจ้าของ และ โลโก้แอป
+            // Footer
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.Bottom
             ) {
                 Text(
-                    text = ownerLabel.split("@")[0].uppercase(), // เอาแค่ชื่อหน้า @ มาโชว์เท่ๆ
+                    text = ownerLabel.split("@")[0].uppercase(),
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Medium,
-                    color = Color.White.copy(alpha = 0.8f),
+                    color = Color.White.copy(alpha = 0.9f),
                     letterSpacing = 1.5.sp
                 )
                 Text(
                     text = "NEXFIN",
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Black,
-                    color = NexFinColors.NeonCyan
+                    color = NexFinColors.SecondaryAccent // เปลี่ยนเป็นสีฟ้า Sky Blue
                 )
             }
         }

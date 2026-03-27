@@ -3,7 +3,6 @@ package com.nexfin.backend.controller;
 import com.nexfin.backend.model.dto.response.UserResponse;
 import com.nexfin.backend.service.UserService;
 import java.util.List;
-import java.util.UUID;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,7 +24,7 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    public UserResponse findById(@PathVariable UUID userId) {
+    public UserResponse findById(@PathVariable String userId) { // <--- ตรงนี้ต้องเป็น String เท่านั้น!
         return userService.findById(userId);
     }
 }

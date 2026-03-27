@@ -1,9 +1,9 @@
+// Frontend/src/commonMain/kotlin/com/nexfin/frontend/ui/screens/transaction/TransferScreen.kt
 package com.nexfin.frontend.ui.screens.transaction
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -25,22 +25,21 @@ fun TransferScreen(
     onBack: () -> Unit
 ) {
     FormShell(
-        title = "Transfer Funds",
-        subtitle = "Send money using the recipient user ID and keep a clean internal reference."
+        title = "โอนเงิน",
+        subtitle = "โอนเงินผ่านรหัสผู้ใช้ (User ID) ของผู้รับ ปลอดภัยและตรวจสอบได้",
+        onBackClick = onBack
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
-            CustomTextField(toUserId, onToUserIdChange, "Recipient user ID")
-            CustomTextField(amount, onAmountChange, "Amount")
-            CustomTextField(reference, onReferenceChange, "Reference")
+            CustomTextField(toUserId, onToUserIdChange, "รหัสผู้ใช้ (User ID) ของผู้รับ")
+            CustomTextField(amount, onAmountChange, "จำนวนเงิน (THB)")
+            CustomTextField(reference, onReferenceChange, "บันทึกช่วยจำ (ไม่บังคับ)")
             CustomButton(
-                text = if (isLoading) "Sending..." else "Send Transfer",
+                text = if (isLoading) "กำลังโอนเงิน..." else "ยืนยันการโอนเงิน",
                 onClick = onSubmit,
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !isLoading
             )
-            if (isLoading) LoadingIndicator("Sending transfer")
-            Text("Want to head back first?", style = MaterialTheme.typography.bodyMedium)
-            CustomButton("Back", onBack, modifier = Modifier.fillMaxWidth(), enabled = !isLoading)
+            if (isLoading) LoadingIndicator("กำลังโอนเงินไปยังผู้รับ")
         }
     }
 }

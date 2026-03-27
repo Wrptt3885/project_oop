@@ -1,9 +1,7 @@
 package com.nexfin.backend.exception;
 
-import java.util.UUID;
-
 public class WalletNotFoundException extends RuntimeException {
-    public WalletNotFoundException(UUID userId) {
+    public WalletNotFoundException(String userId) {
         super("Wallet not found for user " + userId);
     }
 }

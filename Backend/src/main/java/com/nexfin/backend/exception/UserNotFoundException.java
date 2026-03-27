@@ -1,9 +1,9 @@
+// Backend/src/main/java/com/nexfin/backend/exception/UserNotFoundException.java
 package com.nexfin.backend.exception;
 
-import java.util.UUID;
-
 public class UserNotFoundException extends RuntimeException {
-    public UserNotFoundException(UUID userId) {
-        super("User not found " + userId);
+    // แก้จาก UUID เป็น String
+    public UserNotFoundException(String userId) { 
+        super("User not found with id: " + userId);
     }
 }

@@ -1,51 +1,31 @@
+// Frontend/src/commonMain/kotlin/com/nexfin/frontend/ui/theme/Theme.kt
 package com.nexfin.frontend.ui.theme
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
-// สร้างพาเลตต์สำหรับ Dark Theme โดยเฉพาะ
 private val DarkAppColorScheme = darkColorScheme(
-    primary = NexFinColors.NeonCyan,
-    secondary = NexFinColors.NeonPurple,
+    primary = NexFinColors.PrimaryAccent,
+    secondary = NexFinColors.SecondaryAccent,
     background = NexFinColors.DarkBackground,
     surface = NexFinColors.DarkSurface,
-    onPrimary = Color.Black,
-    onSecondary = Color.White,
-    onBackground = NexFinColors.TextPrimary,
-    onSurface = NexFinColors.TextPrimary,
-    error = NexFinColors.Danger
-)
-
-// อันนี้ทำเผื่อไว้เฉยๆ
-private val LightAppColorScheme = lightColorScheme(
-    primary = NexFinColors.Forest,
-    secondary = NexFinColors.Seafoam,
-    background = NexFinColors.Sand,
-    surface = Color.White,
-    onPrimary = Color.White,
-    onSecondary = Color.Black,
-    onBackground = Color.Black,
-    onSurface = Color.Black,
+    onPrimary = Color.White,       // ตัวหนังสือบนปุ่มหลักเป็นสีขาว
+    onSecondary = Color.White,     // ตัวหนังสือบนปุ่มรองเป็นสีขาว
+    onBackground = NexFinColors.TextPrimary, // ตัวหนังสือบนพื้นหลังเป็นสีขาว
+    onSurface = NexFinColors.TextPrimary,    // ตัวหนังสือบนการ์ดเป็นสีขาว
     error = NexFinColors.Danger
 )
 
 @Composable
 fun NexFinTheme(
-    darkTheme: Boolean = true,
+    darkTheme: Boolean = true, // บังคับ Dark Mode ให้หล่อๆ ไปเลย
     content: @Composable () -> Unit
 ) {
-    val colorScheme = if (darkTheme) {
-        DarkAppColorScheme
-    } else {
-        LightAppColorScheme
-    }
-
     MaterialTheme(
-        colorScheme = colorScheme,
-        typography = NexFinTypography, // <-- แก้ตรงนี้เป็น NexFinTypography แล้ว
+        colorScheme = DarkAppColorScheme,
+        typography = NexFinTypography, 
         content = content
     )
 }

@@ -40,7 +40,7 @@ class WalletServiceTest {
 
     @Test
     void shouldHandleTopUp() {
-        UUID userId = UUID.randomUUID();
+        String userId = "1234567890";
         Wallet wallet = createWallet(userId, "25.00");
 
         when(walletRepository.findByUserId(userId)).thenReturn(Optional.of(wallet));
@@ -57,14 +57,14 @@ class WalletServiceTest {
 
     @Test
     void shouldThrowWhenWalletMissing() {
-        UUID userId = UUID.randomUUID();
+        String userId = "1234567890";
         when(walletRepository.findByUserId(userId)).thenReturn(Optional.empty());
 
         assertThrows(WalletNotFoundException.class,
                 () -> walletService.topUp(userId, new TopUpRequest(new BigDecimal("10.00"), "PROMPTPAY")));
     }
 
-    private Wallet createWallet(UUID userId, String balance) {
+    private Wallet createWallet(String userId, String balance) {
         User user = new User(userId, "wallet@nexfin.com", "encoded-password", "Wallet Owner");
         return new Wallet(UUID.randomUUID(), user, new BigDecimal(balance), Currency.THB);
     }

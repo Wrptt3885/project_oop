@@ -65,7 +65,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public List<TransactionResponse> findByUser(UUID userId) {
+    public List<TransactionResponse> findByUser(String userId) {
         return transactionRepository.findAllBySourceWalletUserIdOrTargetWalletUserIdOrderByCreatedAtDesc(userId, userId)
                 .stream()
                 .map(TransactionResponse::from)

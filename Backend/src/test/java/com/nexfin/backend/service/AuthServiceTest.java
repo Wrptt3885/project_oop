@@ -19,7 +19,6 @@ import com.nexfin.backend.repository.UserRepository;
 import com.nexfin.backend.repository.WalletRepository;
 import com.nexfin.backend.service.impl.AuthServiceImpl;
 import java.util.Optional;
-import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -70,7 +69,7 @@ class AuthServiceTest {
     @Test
     void shouldRejectDuplicateEmail() {
         when(userRepository.findByEmail("alice@nexfin.com"))
-                .thenReturn(Optional.of(new User(UUID.randomUUID(), "alice@nexfin.com", "pw", "Alice")));
+                .thenReturn(Optional.of(new User("1234567890", "alice@nexfin.com", "pw", "Alice")));
 
         assertThrows(DuplicateEmailException.class,
                 () -> authService.register(new RegisterRequest("Alice", "alice@nexfin.com", "StrongPass1")));
@@ -78,7 +77,7 @@ class AuthServiceTest {
 
     @Test
     void shouldLoginWithNormalizedEmail() {
-        User user = new User(UUID.randomUUID(), "alice@nexfin.com", "encoded-password", "Alice");
+        User user = new User("1234567890", "alice@nexfin.com", "encoded-password", "Alice");
         when(userRepository.findByEmail("alice@nexfin.com")).thenReturn(Optional.of(user));
         when(passwordEncoder.matches("StrongPass1", "encoded-password")).thenReturn(true);
 

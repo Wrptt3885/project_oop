@@ -1,3 +1,4 @@
+// Frontend/src/commonMain/kotlin/com/nexfin/frontend/ui/screens/transaction/TransactionHistoryScreen.kt
 package com.nexfin.frontend.ui.screens.transaction
 
 import androidx.compose.foundation.layout.Arrangement
@@ -17,22 +18,19 @@ fun TransactionHistoryScreen(
     onBack: () -> Unit
 ) {
     FormShell(
-        title = "Transaction History",
-        subtitle = "Review the latest movement across your wallet."
+        title = "ประวัติการทำธุรกรรม",
+        subtitle = "ตรวจสอบรายการเคลื่อนไหวล่าสุดในวอลเล็ทของคุณ",
+        onBackClick = onBack
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             if (transactions.isEmpty()) {
-                Text("No transactions yet.", style = MaterialTheme.typography.bodyLarge)
+                Text("ยังไม่มีประวัติการทำธุรกรรมในขณะนี้", style = MaterialTheme.typography.bodyLarge)
             } else {
                 RecentTransactions(transactions)
             }
-            com.nexfin.frontend.ui.screens.components.CustomButton(
-                text = "Back to Dashboard",
-                onClick = onBack
-            )
         }
     }
 }
