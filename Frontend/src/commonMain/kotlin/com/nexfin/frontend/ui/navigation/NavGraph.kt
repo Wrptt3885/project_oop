@@ -6,6 +6,7 @@ sealed interface AppDestination {
     data object Dashboard : AppDestination
     data object TopUp : AppDestination
     data object Transfer : AppDestination
+    data object Withdraw : AppDestination
     data object History : AppDestination
     data object Profile : AppDestination
     data object SlipDetail : AppDestination

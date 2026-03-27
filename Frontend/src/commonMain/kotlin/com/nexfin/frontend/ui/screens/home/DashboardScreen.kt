@@ -1,4 +1,3 @@
-// Frontend/src/commonMain/kotlin/com/nexfin/frontend/ui/screens/home/DashboardScreen.kt
 package com.nexfin.frontend.ui.screens.home
 
 import androidx.compose.foundation.background
@@ -25,8 +24,10 @@ fun DashboardScreen(
     onRefresh: () -> Unit,
     onTopUpNavigate: () -> Unit,
     onTransferNavigate: () -> Unit,
+    onWithdrawNavigate: () -> Unit,
     onHistoryNavigate: () -> Unit,
-    onProfileNavigate: () -> Unit
+    onProfileNavigate: () -> Unit,
+    onTransactionClick: (TransactionResponse) -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -52,7 +53,7 @@ fun DashboardScreen(
                     Text(
                         text = "NexFin Wallet",
                         style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.secondary // ใช้สีฟ้า Sky Blue
+                        color = MaterialTheme.colorScheme.secondary
                     )
                     Text(
                         text = "สวัสดี, ${userEmail.substringBefore("@")}",
@@ -95,18 +96,18 @@ fun DashboardScreen(
             
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Button(
                     onClick = onTopUpNavigate,
                     modifier = Modifier.weight(1f).height(56.dp),
                     shape = RoundedCornerShape(16.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary, // สีน้ำเงินเข้ม
+                        containerColor = MaterialTheme.colorScheme.primary,
                         contentColor = Color.White
                     )
                 ) {
-                    Text("เติมเงิน", fontWeight = FontWeight.Bold)
+                    Text("เติม", fontWeight = FontWeight.Bold)
                 }
                 
                 Button(
@@ -114,11 +115,23 @@ fun DashboardScreen(
                     modifier = Modifier.weight(1f).height(56.dp),
                     shape = RoundedCornerShape(16.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.secondary, // สีฟ้า
+                        containerColor = MaterialTheme.colorScheme.secondary,
                         contentColor = Color.White
                     )
                 ) {
-                    Text("โอนเงิน", fontWeight = FontWeight.Bold)
+                    Text("โอน", fontWeight = FontWeight.Bold)
+                }
+
+                Button(
+                    onClick = onWithdrawNavigate,
+                    modifier = Modifier.weight(1f).height(56.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFFF59E0B),
+                        contentColor = Color.White
+                    )
+                ) {
+                    Text("ถอน", fontWeight = FontWeight.Bold)
                 }
             }
 
@@ -145,17 +158,16 @@ fun DashboardScreen(
                 }
             }
 
-            // Recent Activity (บังคับสีขาวให้ชัดเจน)
+            // Recent Activity
             Text(
                 text = "ประวัติการทำรายการล่าสุด",
                 style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onBackground, // ขาวสว่าง
+                color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier.padding(top = 16.dp)
             )
             
             Box(modifier = Modifier.padding(top = 8.dp)) {
                 if (transactions.isEmpty()) {
-                    // กล่องข้อความตอนไม่มีข้อมูล บังคับสีให้สวยๆ
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -167,11 +179,14 @@ fun DashboardScreen(
                         Text(
                             text = "ยังไม่มีประวัติการทำธุรกรรม...",
                             style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f) // เทาอ่อน
+                            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
                         )
                     }
                 } else {
-                    RecentTransactions(transactions)
+                    RecentTransactions(
+                        transactions = transactions,
+                        onTransactionClick = onTransactionClick
+                    )
                 }
             }
         }

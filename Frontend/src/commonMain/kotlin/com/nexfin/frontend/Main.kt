@@ -19,6 +19,7 @@ import com.nexfin.frontend.ui.screens.transaction.SlipScreen
 import com.nexfin.frontend.ui.screens.transaction.TopUpScreen
 import com.nexfin.frontend.ui.screens.transaction.TransactionHistoryScreen
 import com.nexfin.frontend.ui.screens.transaction.TransferScreen
+import com.nexfin.frontend.ui.screens.transaction.WithdrawScreen
 import com.nexfin.frontend.ui.theme.NexFinTheme
 import com.nexfin.frontend.utils.AppLogger
 import com.nexfin.frontend.utils.ValidationUtils
@@ -57,6 +58,7 @@ fun NexFinApp(appModule: AppModule? = null) {
         when (destination) {
             AppDestination.Login -> LoginRoute(module, authState.isLoading) { destination = it }
             AppDestination.Register -> RegisterRoute(module, authState.isLoading) { destination = it }
+            
             AppDestination.TopUp -> TopUpRoute(
                 module = module,
                 userId = currentUserId,
@@ -64,11 +66,7 @@ fun NexFinApp(appModule: AppModule? = null) {
                 errorMessage = walletState.errorMessage,
                 onNavigate = { destination = it },
                 onTopUpSuccess = { amount, reference ->
-                    slipState = SlipState(
-                        amount = amount,
-                        toUserId = currentUserId ?: "-",
-                        reference = reference
-                    )
+                    slipState = SlipState(amount, currentUserId ?: "-", reference)
                     destination = AppDestination.SlipDetail
                 }
             )
@@ -80,10 +78,18 @@ fun NexFinApp(appModule: AppModule? = null) {
                 errorMessage = transactionState.errorMessage,
                 onNavigate = { destination = it },
                 onTransferSuccess = { amount, toUserId, reference ->
+                    slipState = SlipState(amount, toUserId, reference)
+                    destination = AppDestination.SlipDetail
+                }
+            )
+
+            AppDestination.Withdraw -> WithdrawRoute(
+                onNavigate = { destination = it },
+                onWithdrawSuccess = { amount, account ->
                     slipState = SlipState(
                         amount = amount,
-                        toUserId = toUserId,
-                        reference = reference
+                        toUserId = "ธนาคารปลายทาง: $account",
+                        reference = "WD-${kotlin.math.abs(account.hashCode()).toString().takeLast(6)}"
                     )
                     destination = AppDestination.SlipDetail
                 }
@@ -102,18 +108,29 @@ fun NexFinApp(appModule: AppModule? = null) {
                 },
                 onTopUpNavigate = { destination = AppDestination.TopUp },
                 onTransferNavigate = { destination = AppDestination.Transfer },
+                onWithdrawNavigate = { destination = AppDestination.Withdraw }, // สายไฟเชื่อมปุ่มถอน
                 onHistoryNavigate = { destination = AppDestination.History },
-                onProfileNavigate = { destination = AppDestination.Profile }
+                onProfileNavigate = { destination = AppDestination.Profile },
+                onTransactionClick = { transaction ->
+                    slipState = SlipState(
+                        amount = transaction.amount.toString(),
+                        toUserId = if (transaction.type == "TOPUP") "ระบบเติมเงิน NexFin" else transaction.targetWalletId,
+                        reference = transaction.reference
+                    )
+                    destination = AppDestination.SlipDetail
+                }
             )
 
             AppDestination.History -> TransactionHistoryScreen(
                 transactions = transactionState.transactions,
                 onBack = { destination = AppDestination.Dashboard },
                 onTransactionClick = { transaction ->
-                    AppLogger.info(
-                        "NexFinApp",
-                        "Transaction selected: id=${transaction.transactionId}, reference=${transaction.reference}"
+                    slipState = SlipState(
+                        amount = transaction.amount.toString(),
+                        toUserId = if (transaction.type == "TOPUP") "ระบบเติมเงิน NexFin" else transaction.targetWalletId,
+                        reference = transaction.reference
                     )
+                    destination = AppDestination.SlipDetail
                 }
             )
 
@@ -155,11 +172,8 @@ private fun LoginRoute(module: AppModule, isLoading: Boolean, onNavigate: (AppDe
     var password by remember { mutableStateOf("") }
 
     LoginScreen(
-        email = email,
-        password = password,
-        isLoading = isLoading,
-        onEmailChange = { email = it },
-        onPasswordChange = { password = it },
+        email = email, password = password, isLoading = isLoading,
+        onEmailChange = { email = it }, onPasswordChange = { password = it },
         onSubmit = {
             if (ValidationUtils.isValidEmail(email) && ValidationUtils.isValidPassword(password)) {
                 module.authViewModel.login(email, password)
@@ -178,13 +192,8 @@ private fun RegisterRoute(module: AppModule, isLoading: Boolean, onNavigate: (Ap
     var password by remember { mutableStateOf("") }
 
     RegisterScreen(
-        fullName = name,
-        email = email,
-        password = password,
-        isLoading = isLoading,
-        onFullNameChange = { name = it },
-        onEmailChange = { email = it },
-        onPasswordChange = { password = it },
+        fullName = name, email = email, password = password, isLoading = isLoading,
+        onFullNameChange = { name = it }, onEmailChange = { email = it }, onPasswordChange = { password = it },
         onSubmit = {
             if (name.isNotBlank() && ValidationUtils.isValidEmail(email) && ValidationUtils.isValidPassword(password)) {
                 module.authViewModel.register(name, email, password)
@@ -198,12 +207,8 @@ private fun RegisterRoute(module: AppModule, isLoading: Boolean, onNavigate: (Ap
 
 @Composable
 private fun TopUpRoute(
-    module: AppModule,
-    userId: String?,
-    isLoading: Boolean,
-    errorMessage: String?,
-    onNavigate: (AppDestination) -> Unit,
-    onTopUpSuccess: (amount: String, reference: String) -> Unit
+    module: AppModule, userId: String?, isLoading: Boolean, errorMessage: String?,
+    onNavigate: (AppDestination) -> Unit, onTopUpSuccess: (amount: String, reference: String) -> Unit
 ) {
     var amount by remember { mutableStateOf("500") }
     var reference by remember { mutableStateOf("PROMPTPAY_TOPUP_001") }
@@ -212,7 +217,6 @@ private fun TopUpRoute(
     LaunchedEffect(isLoading, errorMessage, pending) {
         if (pending && !isLoading) {
             if (errorMessage == null) {
-                AppLogger.info("NexFinApp", "Top-up completed. Navigating to slip screen.")
                 userId?.let { module.transactionViewModel.loadTransactions(it) }
                 onTopUpSuccess(amount, reference)
             }
@@ -221,11 +225,8 @@ private fun TopUpRoute(
     }
 
     TopUpScreen(
-        amount = amount,
-        reference = reference,
-        isLoading = isLoading,
-        onAmountChange = { amount = it },
-        onReferenceChange = { reference = it },
+        amount = amount, reference = reference, isLoading = isLoading,
+        onAmountChange = { amount = it }, onReferenceChange = { reference = it },
         onSubmit = {
             userId?.let { id ->
                 amount.toDoubleOrNull()?.let { value ->
@@ -240,12 +241,8 @@ private fun TopUpRoute(
 
 @Composable
 private fun TransferRoute(
-    module: AppModule,
-    userId: String?,
-    isLoading: Boolean,
-    errorMessage: String?,
-    onNavigate: (AppDestination) -> Unit,
-    onTransferSuccess: (amount: String, toUserId: String, reference: String) -> Unit
+    module: AppModule, userId: String?, isLoading: Boolean, errorMessage: String?,
+    onNavigate: (AppDestination) -> Unit, onTransferSuccess: (amount: String, toUserId: String, reference: String) -> Unit
 ) {
     var toUserId by remember { mutableStateOf("") }
     var amount by remember { mutableStateOf("125") }
@@ -255,7 +252,6 @@ private fun TransferRoute(
     LaunchedEffect(isLoading, errorMessage, pending) {
         if (pending && !isLoading) {
             if (errorMessage == null) {
-                AppLogger.info("NexFinApp", "Transfer completed. Navigating to slip screen.")
                 userId?.let {
                     module.walletViewModel.loadWallet(it)
                     module.transactionViewModel.loadTransactions(it)
@@ -267,19 +263,43 @@ private fun TransferRoute(
     }
 
     TransferScreen(
-        toUserId = toUserId,
-        amount = amount,
-        reference = reference,
-        isLoading = isLoading,
-        onToUserIdChange = { toUserId = it },
-        onAmountChange = { amount = it },
-        onReferenceChange = { reference = it },
+        toUserId = toUserId, amount = amount, reference = reference, isLoading = isLoading,
+        onToUserIdChange = { toUserId = it }, onAmountChange = { amount = it }, onReferenceChange = { reference = it },
         onSubmit = {
             userId?.let { fromId ->
                 amount.toDoubleOrNull()?.let { value ->
                     pending = true
                     module.transactionViewModel.transfer(fromId, toUserId.trim(), value, reference)
                 }
+            }
+        },
+        onBack = { onNavigate(AppDestination.Dashboard) }
+    )
+}
+
+@Composable
+private fun WithdrawRoute(
+    onNavigate: (AppDestination) -> Unit,
+    onWithdrawSuccess: (amount: String, account: String) -> Unit
+) {
+    var bankAccount by remember { mutableStateOf("") }
+    var amount by remember { mutableStateOf("") }
+    var isSimulating by remember { mutableStateOf(false) }
+
+    LaunchedEffect(isSimulating) {
+        if (isSimulating) {
+            kotlinx.coroutines.delay(1000)
+            onWithdrawSuccess(amount, bankAccount)
+            isSimulating = false
+        }
+    }
+
+    WithdrawScreen(
+        bankAccount = bankAccount, amount = amount, isLoading = isSimulating,
+        onBankAccountChange = { bankAccount = it }, onAmountChange = { amount = it },
+        onSubmit = {
+            if (bankAccount.isNotBlank() && amount.isNotBlank()) {
+                isSimulating = true
             }
         },
         onBack = { onNavigate(AppDestination.Dashboard) }
